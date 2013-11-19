@@ -25,7 +25,7 @@
 
 #include <gst/gst.h>
 #include <gst/audio/gstaudiosrc.h>
-#include <gst/interfaces/propertyprobe.h>
+/* #include <gst/interfaces/propertyprobe.h> */
 
 #include "gstdshow.h"
 #include "gstdshowfakesink.h"

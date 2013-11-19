@@ -38,9 +38,23 @@ plugin_init (GstPlugin * plugin)
   return TRUE;
 }
 
+/* GStreamer API Version */
+#define GST_API_VERSION "1.0"
+
+/* Name of package */
+#define PACKAGE "gst-plugins-dshow"
+
+/* package name in plugins */
+#define GST_PACKAGE_NAME "GStreamer DirectShow sources"
+
+/* package origin */
+#define GST_PACKAGE_ORIGIN "Unknown package origin"
+
+/* Version number of package */
+#define VERSION "1.3.0.1"
+
 extern "C"
 {
-
   GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
       GST_VERSION_MINOR,
       dshowsrcwrapper,

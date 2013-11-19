@@ -32,6 +32,8 @@ CBaseRenderer (CLSID_DshowFakeSink, _T("DshowFakeSink"), NULL, &m_hres)
 STDMETHODIMP CDshowFakeSink::gst_set_media_type (AM_MEDIA_TYPE * pmt)
 {
   m_MediaType.Set (*pmt);
+  VIDEOINFOHEADER *info = (VIDEOINFOHEADER *)pmt->pbFormat;
+
   return S_OK;
 }
 
