@@ -51,31 +51,31 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_MBCS|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\msvc\x86.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-audio-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-video-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\msvc\x86.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-audio-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-video-1.0.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MBCS|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\msvc\x86.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-audio-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-video-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\msvc\x86.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-audio-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-video-1.0.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\msvc\x86.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-audio-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-video-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\msvc\x86.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-audio-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-video-1.0.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\msvc\x86.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-audio-1.0.props" />
-    <Import Project="..\..\..\..\..\..\..\Program Files\gstreamer\1.0\x86\share\vs\2010\libs\gstreamer-video-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\msvc\x86.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-audio-1.0.props" />
+    <Import Project="$(GSTREAMER_1_0_ROOT_X86)\share\vs\2010\libs\gstreamer-video-1.0.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -152,7 +152,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MBCS|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\common;C:\Program Files\Microsoft SDKs\Windows\v7.1\Samples\Multimedia\DirectShow\BaseClasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\common;$(MSSDK)\Samples\Multimedia\DirectShow\BaseClasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBGSTDSHOWSRCWRAPPER_EXPORTS;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -163,7 +163,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;rpcrt4.lib;strmbasd.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;C:\Program Files\Microsoft SDKs\Windows\v7.1\Samples\Multimedia\DirectShow\BaseClasses\Debug_MBCS;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;$(MSSDK)\Samples\Multimedia\DirectShow\BaseClasses\Debug_MBCS;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
