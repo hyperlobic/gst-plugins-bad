@@ -67,7 +67,7 @@ struct _GstDshowAudioSrc
 
   /* bytes array */
   GByteArray *gbarray;
-  GMutex *gbarray_lock;
+  GMutex gbarray_lock;
 
   gboolean is_running;
 };

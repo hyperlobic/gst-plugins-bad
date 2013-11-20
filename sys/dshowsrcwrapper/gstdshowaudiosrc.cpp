@@ -56,16 +56,6 @@ enum
   PROP_DEVICE_NAME
 };
 
-//static void gst_dshowaudiosrc_probe_interface_init (GstPropertyProbeInterface *
-//    iface);
-//static const GList *gst_dshowaudiosrc_probe_get_properties (GstPropertyProbe *
-//    probe);
-//static GValueArray *gst_dshowaudiosrc_probe_get_values (GstPropertyProbe *
-//    probe, guint prop_id, const GParamSpec * pspec);
-//static GValueArray *gst_dshowaudiosrc_get_device_name_values (GstDshowAudioSrc *
-//    src);
-
-
 static void gst_dshowaudiosrc_dispose (GObject * gobject);
 static void gst_dshowaudiosrc_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -90,36 +80,6 @@ static GstCaps *gst_dshowaudiosrc_getcaps_from_streamcaps (GstDshowAudioSrc *
     src, IPin * pin, IAMStreamConfig * streamcaps);
 static gboolean gst_dshowaudiosrc_push_buffer (guint8 * buffer, guint size,
     gpointer src_object, GstClockTime duration);
-
-static void
-gst_dshowaudiosrc_init_interfaces (GType type)
-{
-  //static const GInterfaceInfo dshowaudiosrc_info = {
-  //  (GInterfaceInitFunc) gst_dshowaudiosrc_probe_interface_init,
-  //  NULL,
-  //  NULL,
-  //};
-
-  //g_type_add_interface_static (type,
-  //    GST_TYPE_PROPERTY_PROBE, &dshowaudiosrc_info);
-}
-
-//static void
-//gst_dshowaudiosrc_probe_interface_init (GstPropertyProbeInterface * iface)
-//{
-//  iface->get_properties = gst_dshowaudiosrc_probe_get_properties;
-///*  iface->needs_probe    = gst_dshowaudiosrc_probe_needs_probe;
-//  iface->probe_property = gst_dshowaudiosrc_probe_probe_property;*/
-//  iface->get_values = gst_dshowaudiosrc_probe_get_values;
-//}
-
-//static void
-//gst_dshowaudiosrc_base_init (gpointer klass)
-//{
-//  GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-//
-//
-//}
 
 static void
 gst_dshowaudiosrc_class_init (GstDshowAudioSrcClass * klass)
@@ -190,7 +150,7 @@ gst_dshowaudiosrc_init (GstDshowAudioSrc * src)
   src->pins_mediatypes = NULL;
 
   src->gbarray = g_byte_array_new ();
-  src->gbarray_lock = g_mutex_new ();
+  g_mutex_init(&src->gbarray_lock);
 
   src->is_running = FALSE;
 
@@ -227,10 +187,7 @@ gst_dshowaudiosrc_dispose (GObject * gobject)
     src->gbarray = NULL;
   }
 
-  if (src->gbarray_lock) {
-    g_mutex_free (src->gbarray_lock);
-    src->gbarray_lock = NULL;
-  }
+  g_mutex_clear(&src->gbarray_lock);
 
   /* clean dshow */
   if (src->audio_cap_filter)
@@ -240,23 +197,6 @@ gst_dshowaudiosrc_dispose (GObject * gobject)
 
   G_OBJECT_CLASS (gst_dshowaudiosrc_parent_class)->dispose (gobject);
 }
-
-
-//static const GList *
-//gst_dshowaudiosrc_probe_get_properties (GstPropertyProbe * probe)
-//{
-//  GObjectClass *klass = G_OBJECT_GET_CLASS (probe);
-//  static GList *props = NULL;
-//
-//  if (!props) {
-//    GParamSpec *pspec;
-//
-//    pspec = g_object_class_find_property (klass, "device-name");
-//    props = g_list_append (props, pspec);
-//  }
-//
-//  return props;
-//}
 
 static GValueArray *
 gst_dshowaudiosrc_get_device_name_values (GstDshowAudioSrc * src)
@@ -325,25 +265,6 @@ clean:
 
   return array;
 }
-
-//static GValueArray *
-//gst_dshowaudiosrc_probe_get_values (GstPropertyProbe * probe,
-//    guint prop_id, const GParamSpec * pspec)
-//{
-//  GstDshowAudioSrc *src = GST_DSHOWAUDIOSRC (probe);
-//  GValueArray *array = NULL;
-//
-//  switch (prop_id) {
-//    case PROP_DEVICE_NAME:
-//      array = gst_dshowaudiosrc_get_device_name_values (src);
-//      break;
-//    default:
-//      G_OBJECT_WARN_INVALID_PROPERTY_ID (probe, prop_id, pspec);
-//      break;
-//  }
-//
-//  return array;
-//}
 
 static void
 gst_dshowaudiosrc_set_property (GObject * object, guint prop_id,
@@ -734,12 +655,12 @@ gst_dshowaudiosrc_read (GstAudioSrc * asrc, gpointer data, guint length, GstCloc
   if (src->gbarray) {
   test:
     if (src->gbarray->len >= length) {
-      g_mutex_lock (src->gbarray_lock);
+      g_mutex_lock (&src->gbarray_lock);
       memcpy (data, src->gbarray->data + (src->gbarray->len - length), length);
       g_byte_array_remove_range (src->gbarray, src->gbarray->len - length,
           length);
       ret = length;
-      g_mutex_unlock (src->gbarray_lock);
+      g_mutex_unlock (&src->gbarray_lock);
     } else {
       if (src->is_running) {
         Sleep (GST_AUDIO_BASE_SRC(src)->ringbuffer->spec.latency_time /
@@ -759,11 +680,11 @@ gst_dshowaudiosrc_delay (GstAudioSrc * asrc)
   guint ret = 0;
 
   if (src->gbarray) {
-    g_mutex_lock (src->gbarray_lock);
+    g_mutex_lock (&src->gbarray_lock);
     if (src->gbarray->len) {
       ret = src->gbarray->len / 4;
     }
-    g_mutex_unlock (src->gbarray_lock);
+    g_mutex_unlock (&src->gbarray_lock);
   }
 
   return ret;
@@ -774,11 +695,11 @@ gst_dshowaudiosrc_reset (GstAudioSrc * asrc)
 {
   GstDshowAudioSrc *src = GST_DSHOWAUDIOSRC (asrc);
 
-  g_mutex_lock (src->gbarray_lock);
+  g_mutex_lock (&src->gbarray_lock);
   GST_DEBUG ("byte array size= %d", src->gbarray->len);
   if (src->gbarray->len > 0)
     g_byte_array_remove_range (src->gbarray, 0, src->gbarray->len);
-  g_mutex_unlock (src->gbarray_lock);
+  g_mutex_unlock (&src->gbarray_lock);
 }
 
 static GstCaps *
@@ -866,9 +787,9 @@ gst_dshowaudiosrc_push_buffer (guint8 * buffer, guint size, gpointer src_object,
     return FALSE;
   }
 
-  g_mutex_lock (src->gbarray_lock);
+  g_mutex_lock (&src->gbarray_lock);
   g_byte_array_prepend (src->gbarray, buffer, size);
-  g_mutex_unlock (src->gbarray_lock);
+  g_mutex_unlock (&src->gbarray_lock);
 
   return TRUE;
 }

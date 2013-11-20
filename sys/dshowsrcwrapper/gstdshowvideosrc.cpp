@@ -63,20 +63,6 @@ enum
   PROP_DEVICE_NAME
 };
 
-//static void gst_dshowvideosrc_probe_interface_init (GstPropertyProbeInterface *
-//    iface);
-//static const GList *gst_dshowvideosrc_probe_get_properties (GstPropertyProbe *
-//    probe);
-//static GValueArray *gst_dshowvideosrc_probe_get_values (GstPropertyProbe *
-//    probe, guint prop_id, const GParamSpec * pspec);
-//static GValueArray *gst_dshowvideosrc_get_device_name_values (GstDshowVideoSrc *
-//    src);
-//static gboolean gst_dshowvideosrc_probe_needs_probe (GstPropertyProbe * probe,
-//    guint prop_id, const GParamSpec * pspec);
-//static void gst_dshowvideosrc_probe_probe_property (GstPropertyProbe * probe,
-//    guint prop_id, const GParamSpec * pspec);
-
-
 static void gst_dshowvideosrc_dispose (GObject * gobject);
 static void gst_dshowvideosrc_set_property (GObject * object, guint prop_id,
                                             const GValue * value, GParamSpec * pspec);
@@ -104,42 +90,6 @@ static GstCaps *gst_dshowvideosrc_getcaps_from_enum_mediatypes (GstDshowVideoSrc
                                                                 src, IPin * pin);
 static gboolean gst_dshowvideosrc_push_buffer (guint8 * buffer, guint size,
                                                gpointer src_object, GstClockTime duration);
-
-static void
-  gst_dshowvideosrc_init_interfaces (GType type)
-{
-  //static const GInterfaceInfo dshowvideosrc_info = {
-  //  NULL,
-  //  NULL,
-  //  NULL,
-  //};
-
-  /* g_type_add_interface_static (type,
-  GST_TYPE_PROPERTY_PROBE, &dshowvideosrc_info);*/
-}
-
-//static void
-//gst_dshowvideosrc_probe_interface_init (GstPropertyProbeInterface * iface)
-//{
-//  iface->get_properties = gst_dshowvideosrc_probe_get_properties;
-//  iface->needs_probe = gst_dshowvideosrc_probe_needs_probe;
-//  iface->probe_property = gst_dshowvideosrc_probe_probe_property;
-//  iface->get_values = gst_dshowvideosrc_probe_get_values;
-//}
-
-//static void
-//gst_dshowvideosrc_base_init (gpointer klass)
-//{
-//  GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-//
-//  gst_element_class_add_pad_template (element_class,
-//      gst_static_pad_template_get (&src_template));
-//
-//  gst_element_class_set_static_metadata (element_class,
-//      "DirectShow video capture source", "Source/Video",
-//      "Receive data from a directshow video capture graph",
-//      "Sebastien Moutte <sebastien@moutte.net>");
-//}
 
 static void
   gst_dshowvideosrc_class_init (GstDshowVideoSrcClass * klass)
@@ -319,52 +269,6 @@ static void
   G_OBJECT_CLASS (gst_dshowvideosrc_parent_class)->dispose (gobject);
 }
 
-//static gboolean
-//gst_dshowvideosrc_probe_needs_probe (GstPropertyProbe * probe,
-//    guint prop_id, const GParamSpec * pspec)
-//{
-//  static gboolean init = FALSE;
-//  gboolean ret = FALSE;
-//
-//  if (!init) {
-//    ret = TRUE;
-//    init = TRUE;
-//  }
-//
-//  return ret;
-//}
-
-//static void
-//gst_dshowvideosrc_probe_probe_property (GstPropertyProbe * probe,
-//    guint prop_id, const GParamSpec * pspec)
-//{
-//  GObjectClass *klass = G_OBJECT_GET_CLASS (probe);
-//
-//  switch (prop_id) {
-//    case PROP_DEVICE_NAME:
-//      break;
-//    default:
-//      G_OBJECT_WARN_INVALID_PROPERTY_ID (probe, prop_id, pspec);
-//      break;
-//  }
-//}
-//
-//static const GList *
-//gst_dshowvideosrc_probe_get_properties (GstPropertyProbe * probe)
-//{
-//  GObjectClass *klass = G_OBJECT_GET_CLASS (probe);
-//  static GList *props = NULL;
-//
-//  if (!props) {
-//    GParamSpec *pspec;
-//
-//    pspec = g_object_class_find_property (klass, "device-name");
-//    props = g_list_append (props, pspec);
-//  }
-//
-//  return props;
-//}
-
 static GValueArray *
   gst_dshowvideosrc_get_device_name_values (GstDshowVideoSrc * src)
 {
@@ -431,25 +335,6 @@ clean:
 
   return array;
 }
-
-//static GValueArray *
-//gst_dshowvideosrc_probe_get_values (GstPropertyProbe * probe,
-//    guint prop_id, const GParamSpec * pspec)
-//{
-//  GstDshowVideoSrc *src = GST_DSHOWVIDEOSRC (probe);
-//  GValueArray *array = NULL;
-//
-//  switch (prop_id) {
-//    case PROP_DEVICE_NAME:
-//      array = gst_dshowvideosrc_get_device_name_values (src);
-//      break;
-//    default:
-//      G_OBJECT_WARN_INVALID_PROPERTY_ID (probe, prop_id, pspec);
-//      break;
-//  }
-//
-//  return array;
-//}
 
 static void
   gst_dshowvideosrc_set_property (GObject * object, guint prop_id,
