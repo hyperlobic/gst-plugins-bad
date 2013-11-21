@@ -408,9 +408,6 @@ gst_dshow_guid_to_gst_video_format (AM_MEDIA_TYPE *mediatype)
   if (gst_dshow_check_mediatype (mediatype, MEDIASUBTYPE_UYVY, FORMAT_VideoInfo))
     return GST_VIDEO_FORMAT_UYVY;
 
-  //if(gst_dshow_check_mediatype(mediatype, MEDIASUBTYPE_MJPG, FORMAT_VideoInfo))
-  //  return GST_VIDEO_FORMAT_ENCODED;
-
   return GST_VIDEO_FORMAT_UNKNOWN;
 }
 
@@ -453,6 +450,8 @@ gst_dshow_new_video_caps (GstVideoFormat video_format, const gchar * name,
       video_caps = gst_caps_new_simple ("video/x-dv",
           "systemstream", G_TYPE_BOOLEAN, TRUE, NULL);
       return video_caps;
+    } else if (g_ascii_strncasecmp (name, "image/jpeg", 13) == 0) {
+      video_caps = gst_caps_new_simple ("image/jpeg", NULL);
     }
   }
 

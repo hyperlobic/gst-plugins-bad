@@ -49,7 +49,11 @@ GST_DEBUG_CATEGORY_STATIC (dshowvideosrc_debug);
 static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
                                                                     GST_PAD_SRC,
                                                                     GST_PAD_ALWAYS,
-                                                                    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE("{ BGR, YUV, YUY2, UYVY }"))
+                                                                    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE("{ BGR, YUV, YUY2, UYVY }") ";"
+                                                                    "image/jpeg",
+                                                                    "width = (int) [ 1, MAX ],"
+                                                                    "height = (int) [ 1, MAX ],"
+                                                                    "framerate = (fraction) [ 0, MAX ],")
                                                                     );
 
 static void gst_dshowvideosrc_init_interfaces (GType type);
@@ -945,7 +949,12 @@ static GstCaps *
 
           pin_mediatype->granularityWidth = 0;
           pin_mediatype->granularityHeight = 0;
+      } else if(gst_dshow_check_mediatype(pin_mediatype->mediatype, 
+        MEDIASUBTYPE_MJPG, FORMAT_VideoInfo)) {
+          mediacaps = gst_dshow_new_video_caps(GST_VIDEO_FORMAT_UNKNOWN, 
+                                               "image/jpeg", pin_mediatype);
       }
+
 
       if (mediacaps) {
         src->pins_mediatypes =
@@ -997,7 +1006,14 @@ static GstCaps *
     info.par_n = 1;
     info.par_d = 1;
 
-    if (video_format != GST_VIDEO_FORMAT_UNKNOWN)
+    if(video_format == GST_VIDEO_FORMAT_ENCODED) {
+      if(gst_dshow_check_mediatype(pin_mediatype->mediatype, MEDIASUBTYPE_MJPG, FORMAT_VideoInfo)) {
+        mediacaps = gst_caps_new_simple("image/jpeg", "width", G_TYPE_INT, info.width, 
+                                        "height", G_TYPE_INT, info.height, 
+                                        "framerate", GST_TYPE_FRACTION, info.fps_n, info.fps_d);
+      }
+    }
+    else if (video_format != GST_VIDEO_FORMAT_UNKNOWN)
       mediacaps = gst_video_info_to_caps (&info);
 
     if (mediacaps) {
