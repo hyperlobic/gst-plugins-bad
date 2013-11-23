@@ -396,7 +396,6 @@ gst_dshowaudiosrc_get_caps (GstBaseSrc * basesrc, GstCaps *filter)
   }
 
   if (src->caps) {
-    GST_LOG ("caps are %" GST_PTR_FORMAT, src->caps);
     return gst_caps_ref (src->caps);
   }
 
@@ -549,7 +548,7 @@ gst_dshowaudiosrc_prepare (GstAudioSrc * asrc, GstAudioRingBufferSpec * spec)
           goto error;
         }
 
-		spec->segsize = (gint) (GST_AUDIO_INFO_BPS(&spec->info) * spec->info.rate * spec->latency_time /
+		    spec->segsize = (gint) (GST_AUDIO_INFO_BPF(&spec->info) * spec->info.rate * spec->latency_time /
             GST_MSECOND);
         spec->segtotal = (gint) ((gfloat) spec->buffer_time /
             (gfloat) spec->latency_time + 0.5);
