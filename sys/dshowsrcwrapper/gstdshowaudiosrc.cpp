@@ -513,12 +513,54 @@ gst_dshowaudiosrc_prepare (GstAudioSrc * asrc, GstAudioRingBufferSpec * spec)
 {
   HRESULT hres;
   IPin *input_pin = NULL;
+  IPin *output_pin = NULL;
   GstDshowAudioSrc *src = GST_DSHOWAUDIOSRC (asrc);
+  //GstStructure *s = gst_caps_get_structure (caps, 0);
+  FILTER_STATE ds_graph_state;
+  GstCaps *current_caps;
 
   /* search the negociated caps in our caps list to get its index and the corresponding mediatype */
   if (gst_caps_is_subset (spec->caps, src->caps)) {
     guint i = 0;
     gint res = -1;
+
+    hres = src->media_filter->GetState(0, &ds_graph_state);
+    if(ds_graph_state == State_Running) {
+      GST_INFO("Setting caps while DirectShow graph is already running");
+      GST_LOG ("new caps are %" GST_PTR_FORMAT, spec->caps);
+      GST_LOG ("src caps are %" GST_PTR_FORMAT, src->caps);
+      current_caps = gst_pad_get_current_caps(GST_BASE_SRC_PAD(src));
+
+      if(gst_caps_is_equal(current_caps, spec->caps)) {
+        /* no need to set caps, just return */
+        GST_INFO("Not resetting caps");
+        gst_caps_unref(current_caps);
+        return TRUE;
+      }
+      else {
+        /* stop graph and disconnect filters so new caps can be set */
+        GST_INFO("Different caps, stopping DirectShow graph");
+        hres = src->media_filter->Stop();
+        hres = src->media_filter->GetState(2000, &ds_graph_state);
+        if(hres != S_OK) {
+          GST_ERROR("Could not stop DirectShow graph. Cannot renegoiate pins.");
+          goto error;
+        }
+        gst_dshow_get_pin_from_filter (src->dshow_fakesink, PINDIR_INPUT,
+          &input_pin);
+        if (!input_pin) {
+          input_pin->Release();
+          GST_ERROR ("Can't get input pin from our dshow fakesink");
+          goto error;
+        }
+        input_pin->ConnectedTo(&output_pin);
+        hres = input_pin->Disconnect();
+        hres = output_pin->Disconnect();
+        input_pin->Release();
+        output_pin->Release();
+      }
+      gst_caps_unref(current_caps);
+    }
 
     for (; i < gst_caps_get_size (src->caps) && res == -1; i++) {
       GstCaps *capstmp = gst_caps_copy_nth (src->caps, i);
