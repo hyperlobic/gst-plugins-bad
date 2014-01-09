@@ -31,29 +31,20 @@
 GST_DEBUG_CATEGORY_STATIC (dshowvideosrc_debug);
 #define GST_CAT_DEFAULT dshowvideosrc_debug
 
-//static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
-//    GST_PAD_SRC,
-//    GST_PAD_ALWAYS,
-//    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE("BGR") ";"
-//        GST_VIDEO_CAPS_MAKE("YUV") ";"
-//        GST_VIDEO_CAPS_MAKE("YUY2") ";"
-//        GST_VIDEO_CAPS_MAKE("UYVY") ";"
-//        "video/x-dv,"
-//        "systemstream = (boolean) FALSE,"
-//        "width = (int) [ 1, MAX ],"
-//        "height = (int) [ 1, MAX ],"
-//        "framerate = (fraction) [ 0, MAX ],"
-//        "format = (fourcc) dvsd;" "video/x-dv," "systemstream = (boolean) TRUE")
-//    );
-
 static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
                                                                     GST_PAD_SRC,
                                                                     GST_PAD_ALWAYS,
-                                                                    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE("{ RGB, YUV, YUY2, UYVY }") ";"
-                                                                    "image/jpeg",
+                                                                    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE("{ BGR, YUV, YUY2, UYVY }") ";"
+                                                                    "image/jpeg,"
                                                                     "width = (int) [ 1, MAX ],"
                                                                     "height = (int) [ 1, MAX ],"
-                                                                    "framerate = (fraction) [ 0, MAX ],")
+                                                                    "framerate = (fraction) [ 0, MAX ];"
+                                                                    "video/x-dv,"
+                                                                    "systemstream = (boolean) FALSE,"
+                                                                    "width = (int) [ 1, MAX ],"
+                                                                    "height = (int) [ 1, MAX ],"
+                                                                    "framerate = (fraction) [ 0, MAX ];" 
+                                                                    "video/x-dv," "systemstream = (boolean) TRUE")
                                                                     );
 
 static void gst_dshowvideosrc_init_interfaces (GType type);
@@ -670,8 +661,6 @@ static gboolean
     hres = src->media_control->GetState(0, &ds_graph_state);
     if(ds_graph_state == State_Running) {
       GST_INFO("Setting caps while DirectShow graph is already running");
-      GST_LOG ("new caps are %" GST_PTR_FORMAT, caps);
-      GST_LOG ("src caps are %" GST_PTR_FORMAT, src->caps);
       current_caps = gst_pad_get_current_caps(GST_BASE_SRC_PAD(src));
 
       if(gst_caps_is_equal(current_caps, caps)) {
@@ -721,8 +710,8 @@ static gboolean
       if (type_pin_mediatype) {
         GstCapturePinMediaType *pin_mediatype =
           (GstCapturePinMediaType *) type_pin_mediatype->data;
-        gchar *caps_string = NULL;
         gchar *src_caps_string = NULL;
+        const gchar *format_string = NULL;
 
         /* retrieve the desired video size */
         VIDEOINFOHEADER *video_info = NULL;
@@ -782,14 +771,14 @@ static gboolean
         gst_structure_get_int (s, "height", &src->height);
 
         src->is_rgb = FALSE;
-        caps_string = gst_caps_to_string (caps);
-        if (caps_string) {
-          if (strstr (caps_string, "video/x-raw-rgb")) {
+        format_string = gst_structure_get_string (s, "format");
+        if(format_string) {
+          if(!strcmp(format_string, "BGR")) {
             src->is_rgb = TRUE;
-          } else {
+          }
+          else {
             src->is_rgb = FALSE;
           }
-          g_free (caps_string);
         }
 
         hres = src->media_control->Run();
@@ -992,7 +981,7 @@ static GstCaps *
       } else if(gst_dshow_check_mediatype(pin_mediatype->mediatype, 
         MEDIASUBTYPE_MJPG, FORMAT_VideoInfo)) {
           mediacaps = gst_dshow_new_video_caps(GST_VIDEO_FORMAT_UNKNOWN, 
-                                               "image/jpeg", pin_mediatype);
+            "image/jpeg", pin_mediatype);
       }
 
 
@@ -1049,8 +1038,8 @@ static GstCaps *
     if(video_format == GST_VIDEO_FORMAT_ENCODED) {
       if(gst_dshow_check_mediatype(pin_mediatype->mediatype, MEDIASUBTYPE_MJPG, FORMAT_VideoInfo)) {
         mediacaps = gst_caps_new_simple("image/jpeg", "width", G_TYPE_INT, info.width, 
-                                        "height", G_TYPE_INT, info.height, 
-                                        "framerate", GST_TYPE_FRACTION, info.fps_n, info.fps_d);
+          "height", G_TYPE_INT, info.height, 
+          "framerate", GST_TYPE_FRACTION, info.fps_n, info.fps_d);
       }
     }
     else if (video_format != GST_VIDEO_FORMAT_UNKNOWN)
