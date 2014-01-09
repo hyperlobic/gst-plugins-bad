@@ -305,7 +305,19 @@ static void
 gst_dshowaudiosrc_get_property (GObject * object, guint prop_id,
     GValue * value, GParamSpec * pspec)
 {
+  GstDshowAudioSrc *src = GST_DSHOWAUDIOSRC (object);
 
+  switch(prop_id) {
+    case PROP_DEVICE:
+      g_value_set_string(value, src->device);
+      break;
+    case PROP_DEVICE_NAME:
+      g_value_set_string(value, src->device_name);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+      break;
+  }
 }
 
 static GstCaps *

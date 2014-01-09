@@ -63,7 +63,6 @@ static void gst_dshowvideosrc_set_property (GObject * object, guint prop_id,
                                             const GValue * value, GParamSpec * pspec);
 static void gst_dshowvideosrc_get_property (GObject * object, guint prop_id,
                                             GValue * value, GParamSpec * pspec);
-//static GstCaps *gst_dshowvideosrc_get_caps (GstBaseSrc * src, GstCaps *filter);
 static GstStateChangeReturn gst_dshowvideosrc_change_state (GstElement *
                                                             element, GstStateChange transition);
 
@@ -244,16 +243,6 @@ static void
   g_mutex_clear(&src->buffer_mutex);
   g_cond_clear(&src->buffer_cond);
 
-  //if (src->buffer_mutex) {
-  //  g_mutex_free (src->buffer_mutex);
-  //  src->buffer_mutex = NULL;
-  //}
-
-  //if (src->buffer_cond) {
-  //  g_cond_free (src->buffer_cond);
-  //  src->buffer_cond = NULL;
-  //}
-
   if (src->buffer) {
     gst_buffer_unref (src->buffer);
     src->buffer = NULL;
@@ -338,31 +327,31 @@ static void
   GstDshowVideoSrc *src = GST_DSHOWVIDEOSRC (object);
 
   switch (prop_id) {
-  case PROP_DEVICE:
-    {
-      if (src->device) {
-        g_free (src->device);
-        src->device = NULL;
+    case PROP_DEVICE:
+      {
+        if (src->device) {
+          g_free (src->device);
+          src->device = NULL;
+        }
+        if (g_value_get_string (value)) {
+          src->device = g_strdup (g_value_get_string (value));
+        }
+        break;
       }
-      if (g_value_get_string (value)) {
-        src->device = g_strdup (g_value_get_string (value));
+    case PROP_DEVICE_NAME:
+      {
+        if (src->device_name) {
+          g_free (src->device_name);
+          src->device_name = NULL;
+        }
+        if (g_value_get_string (value)) {
+          src->device_name = g_strdup (g_value_get_string (value));
+        }
+        break;
       }
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
-    }
-  case PROP_DEVICE_NAME:
-    {
-      if (src->device_name) {
-        g_free (src->device_name);
-        src->device_name = NULL;
-      }
-      if (g_value_get_string (value)) {
-        src->device_name = g_strdup (g_value_get_string (value));
-      }
-      break;
-    }
-  default:
-    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    break;
   }
 }
 
@@ -370,7 +359,19 @@ static void
   gst_dshowvideosrc_get_property (GObject * object, guint prop_id,
   GValue * value, GParamSpec * pspec)
 {
+  GstDshowVideoSrc *src = GST_DSHOWVIDEOSRC (object);
 
+  switch(prop_id) {
+    case PROP_DEVICE:
+      g_value_set_string(value, src->device);
+      break;
+    case PROP_DEVICE_NAME:
+      g_value_set_string(value, src->device_name);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+      break;
+  }
 }
 
 static GstCaps *
